@@ -1,0 +1,19 @@
+body{
+    font-family: 'Montserrat', sans-serif;
+}
+
+h5{
+    text-transform: uppercase;
+}
+
+#card img {
+    height: 10em;
+}
+
+#delete{
+    display: inline;
+}
+
+em{
+    font-weight: 200;
+}
