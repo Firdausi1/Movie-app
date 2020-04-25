@@ -27,12 +27,14 @@
             <%})%>
         
         <div>
+            <%if(currentUser){%>
             <div class="edit-delete">
                 <a href="/movies/<%=movie._id%>/edit" class="card-link btn btn-primary mr-3">Edit</a>
                 <form action="/movies/<%=movie._id%>?_method=DELETE" method="post" id="delete">
                     <button class="btn btn-outline-danger" >Delete</button>
                 </form>
             </div>
+            <%}%>
             <a href="/movies/<%=movie._id%>/comments/new" class="card-link btn btn-primary comment-button">Add new comment</a>
         </div>
     </div>
