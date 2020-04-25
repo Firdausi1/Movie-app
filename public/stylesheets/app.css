@@ -2,13 +2,60 @@ body{
     font-family: 'Montserrat', sans-serif;
 }
 
+.show-body{
+    width: 70%;
+    margin: 0 auto;
+}
+
+#show-image{
+    margin-top: 2rem;
+    height: 55vh;
+    width: 35%;
+}
+
+.show-release{
+    float: left;
+}
+
+.show-rating{
+    float: right;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.show-movie-title{
+    margin-bottom: 0;
+}
+
+.cast{
+    font-weight: 200;
+}
+
+.comment{
+    margin-bottom: .5rem;
+}
+
+.comment-author{
+    margin-bottom: 0;
+}
+
+.comment-button{
+    float: right;
+}
+
 h5{
     text-transform: uppercase;
     font-weight: 700;
 }
 
-#card img {
-    height: 10em;
+.card-img-top {
+    width: 100%;
+    height: 40vh;
+    object-fit: cover;
 }
 
 #delete{

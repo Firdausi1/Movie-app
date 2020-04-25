@@ -1,25 +1,28 @@
-<%- include ("partials/header") -%>
+<%- include ("../partials/header") -%>
 <div class="container">
 <h1 class="text-center my-5">Movies</h1>
-<div class="row">
+<!-- <div class="row"> -->
+<div class="row row-cols-1 row-cols-md-3">
 <% movies.forEach(function(movie){%>
-    
-        <div class="col-lg-4 col-md-6">
-        <div class="card-group">
-            <div class="card mb-5"  id = "card">
-                <img src="<%= movie.image%>" class="card-img-top">
+    <div class="col mb-4 col-sm-6">
+        <!-- <div class="col-lg-4 col-md-6">
+        <div class="card-group"> -->
+            <div class="card"  id = "card">
+                    <img src="<%= movie.image%>" class="card-img-top img-fluid">
                 <div class="card-body">
                     <h5 class="card-title"><%= movie.title %></h5>
                     <p class="card-text"><%= movie.body.substring(0, 100) %>...</p>
                     <p>Released on: <em><%= movie.Date.toDateString()%></em></p>
                     <a href="/movies/<%=movie._id%>" class="card-link btn btn-primary">Read more</a>
                     <a href="/movies/<%=movie._id%>/edit" class="card-link btn btn-outline-primary">Edit</a>
+                    <!-- <a><i class="fa fa-chat"></i></a> -->
                 </div> 
             </div>    
-        </div>
-        </div>
+        <!-- </div>
+        </div> -->
+    </div>
 <%})%>
-
 </div>
 </div>
-<%- include ("partials/footer") -%>
+<!-- </div> -->
+<%- include ("../partials/footer") -%>
