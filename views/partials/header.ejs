@@ -25,6 +25,21 @@
                     <a class="nav-link" href="/movies/new">ADD MOVIE</a>
                     </li>
                 </ul>
+                <ul class="navbar-nav" id="mainNavbar">
+                    <%if(!currentUser){%>
+                    <li class="nav-item">
+                      <a class="nav-link" href="/login">LogIn</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="/register">SignUp</a>
+                    </li>
+                    <%}else{%>
+                    <li class="nav-item"><a class="nav-link">welcome <%=currentUser.username%></a></li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="/logout">LogOut</a>
+                    </li>
+                    <%}%>
+                  </ul>
             </div>
         </div>
     </nav>

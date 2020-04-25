@@ -4,11 +4,17 @@ var express = require("express"),
 	bodyParser = require("body-parser"),
 	expressSanitizer = require("express-sanitizer"),					 
     mongoose = require("mongoose"),
+    passport = require("passport"),
+    localStrategy = require("passport-local"),
+    passportLocalMongoose = require("passport-local-mongoose"),
     movie = require("./models/movie"),
-    comment = require("./models/comment")
+    comment = require("./models/comment"),
+    user = require("./models/user");
+
 //     seedDB = require("./seed");
 
 // seedDB();
+
 mongoose.connect("mongodb://localhost/movie_app", {useNewUrlParser: true, useFindAndModify: false }).then(() => {
     console.log("Connected to Database");
     }).catch((err) => {
@@ -20,6 +26,23 @@ app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.use(methodOverride("_method"));
 
+app.use(require("express-session")({
+	secret: "could be anything",
+	resave: false,
+	saveUninitialized: false
+})),
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new localStrategy(user.authenticate()));
+passport.serializeUser(user.serializeUser());
+passport.deserializeUser(user.deserializeUser());
+
+app.use(function(req, res, next){
+	res.locals.currentUser = req.user;
+	next();
+})
 
 app.get("/", function(req, res){
     res.redirect("/movies")
@@ -63,7 +86,7 @@ app.get("/movies/:id", function(req, res){
     })
 })
 
-app.get("/movies/:id/comments/new", function(req, res){
+app.get("/movies/:id/comments/new", isLoggedIn, function(req, res){
     movie.findById(req.params.id, function(err, movie){
         if(err){
             console.log(err)
@@ -73,7 +96,7 @@ app.get("/movies/:id/comments/new", function(req, res){
     })
 })
 
-app.post("/movies/:id/comments", function(req, res){
+app.post("/movies/:id/comments", isLoggedIn, function(req, res){
     movie.findById(req.params.id, function(err, movie){
         if(err){
             console.log(err);
@@ -124,6 +147,48 @@ app.delete("/movies/:id", function(req, res){
         }
     })
 })
+
+//auth routes
+
+app.get("/register", function(req, res){
+    res.render("register")
+})
+
+app.post("/register", function(req, res){
+    var newUser = new user({username: req.body.username});
+    user.register(newUser, req.body.password, function(err, user){
+        if(err){
+            console.log(err);
+            return res.render("register");
+        }
+        passport.authenticate("local")(req, res, function(){
+            res.redirect("/movies")
+        })
+    })
+})
+
+app.get("/login", function(req, res){
+    res.render("login")
+})
+
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/movies",
+    failureRedirect: "/login"
+}), function(req, res){
+
+})
+
+app.get("/logout", function(req, res){
+    req.logout();
+    res.redirect("/movies");
+})
+
+function isLoggedIn(req, res, next){
+    if(req.isAuthenticated()){
+        return next();
+    }
+    res.redirect("/login")
+}
 
 app.listen(3000, function(){
 	console.log("Serving App")
