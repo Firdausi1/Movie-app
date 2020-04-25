@@ -3,32 +3,37 @@
     
     <div class="text-center mb-3"> <img  src="<%= movie.image%>" id="show-image"></div>
     <div class="show-body">
-            <p class="text-center show-release">Released on: <em><%= movie.Date.toDateString()%></em></p>
+            <p class="show-release">Released on: <em><%= movie.Date.toDateString()%></em></p>
             <span class="show-rating">ratings</span>
         
         <div class="clearfix"></div>
         <div>
             <h3 class="show-movie-title"><%= movie.title %></h3>
             <p class="text-justify"><%= movie.body %></p>
-            <p class="cast mb-0">cast: <%=movie.cast%></p>
+            <p class="cast mb-0">Cast: <%=movie.cast%></p>
             <p class="cast">Director: <%=movie.director%></p>
         </div>
         <hr>
-    
-        <div>
-            <h4 class="comment">Comments</h4>
+
+            <h4 class="comment-heading">Comments</h4>
             <% movie.comments.forEach(function(comment){%>
+                <div class="comment">
+                <div>
                 <h5 class="comment-author"><%= comment.author %></h5>
-                <p><%= comment.text %></p>
+                <span class="comment-date"><%= movie.Date.toLocaleDateString()%></span></div>
+                <div class="clearfix"></div>
+                  <p><%= comment.text %></p>
+                </div>
             <%})%>
-        </div>
-    
-        <div class="text-center">
-            <a href="/movies/<%=movie._id%>/edit" class="card-link btn btn-primary mr-3">Edit</a>
-            <form action="/movies/<%=movie._id%>?_method=DELETE" method="post" id="delete">
-                <button class="btn btn-outline-danger" >Delete</button>
-            </form>
-            <a href="/movies/<%=movie._id%>/comments/new" class="card-link btn btn-primary mr-3 comment-button">Add new comment</a>
+        
+        <div>
+            <div class="edit-delete">
+                <a href="/movies/<%=movie._id%>/edit" class="card-link btn btn-primary mr-3">Edit</a>
+                <form action="/movies/<%=movie._id%>?_method=DELETE" method="post" id="delete">
+                    <button class="btn btn-outline-danger" >Delete</button>
+                </form>
+            </div>
+            <a href="/movies/<%=movie._id%>/comments/new" class="card-link btn btn-primary comment-button">Add new comment</a>
         </div>
     </div>
 </div>
