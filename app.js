@@ -5,10 +5,10 @@ var express = require("express"),
 	expressSanitizer = require("express-sanitizer"),					 
     mongoose = require("mongoose"),
     movie = require("./models/movie"),
-    comment = require("./models/comment"),
-    seedDB = require("./seed");
+    comment = require("./models/comment")
+//     seedDB = require("./seed");
 
-seedDB();
+// seedDB();
 mongoose.connect("mongodb://localhost/movie_app", {useNewUrlParser: true, useFindAndModify: false }).then(() => {
     console.log("Connected to Database");
     }).catch((err) => {
