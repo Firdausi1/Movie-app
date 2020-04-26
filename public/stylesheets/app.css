@@ -59,13 +59,12 @@ body{
     float: left;
 }
 
-.comment-button{
-    float: right;
+.delete-form{
+    display: inline;
 }
 
-h5{
-    text-transform: uppercase;
-    font-weight: 700;
+.comment-button{
+    float: right;
 }
 
 .card-img-top {

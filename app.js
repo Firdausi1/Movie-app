@@ -11,9 +11,9 @@ var express = require("express"),
     comment = require("./models/comment"),
     user = require("./models/user");
 
-//     seedDB = require("./seed");
+    seedDB = require("./seed");
 
-// seedDB();
+//seedDB();
 
 mongoose.connect("mongodb://localhost/movie_app", {useNewUrlParser: true, useFindAndModify: false }).then(() => {
     console.log("Connected to Database");
@@ -59,13 +59,24 @@ app.get("/movies", function(req, res){
     })
 })
 
-app.get("/movies/new", function(req, res){
+app.get("/movies/new", isLoggedIn, function(req, res){
     res.render("movies/new")
 })
 
-app.post("/movies", function(req, res){
+app.post("/movies", isLoggedIn, function(req, res){
     req.body.movie.body =req.sanitize(req.body.movie.body)
-    movie.create(req.body.movie, function(err, newMovie){
+    var title = req.body.movie.title;
+	var image = req.body.movie.image;
+    var body = req.body.movie.body;
+    var cast = req.body.movie.cast;
+	var director = req.body.movie.director;
+    var author = {
+        id : req.user._id,
+        username: req.user.username
+    };
+    var movies = {title:title,image:image,body:body,author:author,cast:cast,director:director};
+
+    movie.create(movies, function(err, newMovie){
         if(err){
             console.log(err)
         }
@@ -105,6 +116,9 @@ app.post("/movies/:id/comments", isLoggedIn, function(req, res){
                 if(err){
                     res.redirect("/movies");
                 }else{
+                    comment.author.id = req.user._id;
+                    comment.author.username = req.user.username;
+                    comment.save();
                     movie.comments.push(comment);
                     movie.save();
                     res.redirect("/movies/"+req.params.id)
@@ -114,7 +128,7 @@ app.post("/movies/:id/comments", isLoggedIn, function(req, res){
     })
 })
 
-app.get("/movies/:id/edit", function(req, res){
+app.get("/movies/:id/edit", checkOwnership, function(req, res){
     movie.findById(req.params.id, function(err, foundMovie){
         if(err){
             res.redirect("/movies")
@@ -125,7 +139,7 @@ app.get("/movies/:id/edit", function(req, res){
     })
 })
 
-app.put("/movies/:id", function(req, res){
+app.put("/movies/:id", checkOwnership, function(req, res){
     req.body.movie.body =req.sanitize(req.body.movie.body)
     movie.findByIdAndUpdate(req.params.id, req.body.movie, function(err, updateMovie){
         if(err){
@@ -137,13 +151,44 @@ app.put("/movies/:id", function(req, res){
     })
 })
 
-app.delete("/movies/:id", function(req, res){
+app.delete("/movies/:id", checkOwnership, function(req, res){
     movie.findByIdAndRemove(req.params.id, function(err){
         if(err){
             res.redirect("/movies")
         }
         else{
             res.redirect("/movies")
+        }
+    })
+})
+
+app.get("/movies/:id/comments/:comment_id/edit", checkCommentOwnership, function(req, res){
+    comment.findById(req.params.comment_id, function(err, comment){
+        if(err){
+            console.log(err)
+        }else{
+            res.render("comments/edit",{movie_id:req.params.id, comment:comment})
+        }
+    })
+})
+
+app.put("/movies/:id/comments/:comment_id", checkCommentOwnership,function(req, res){
+    comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, comment){
+        if(err){
+            console.log(err)
+        }
+        else{
+            res.redirect("/movies/"+req.params.id)
+        }
+    })
+})
+
+app.delete("/movies/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
+    comment.findByIdAndRemove(req.params.comment_id, function(err){
+        if(err){
+            console.log(err)
+        }else{
+            res.redirect("/movies/"+req.params.id)
         }
     })
 })
@@ -188,6 +233,43 @@ function isLoggedIn(req, res, next){
         return next();
     }
     res.redirect("/login")
+}
+
+
+function checkOwnership(req, res, next){
+	if(req.isAuthenticated()){
+		movie.findById(req.params.id, function(err, movie){
+		if(err){
+			res.redirect("back")
+		}else{
+			if(movie.author.id.equals(req.user._id)){
+				next();
+			}else{
+				res.redirect("back")
+			}
+		}
+	})
+	}else{
+		res.redirect("back");
+	}
+}
+
+function checkCommentOwnership(req, res, next){
+	if(req.isAuthenticated()){
+		comment.findById(req.params.comment_id, function(err, comment){
+		if(err){
+			res.redirect("back")
+		}else{
+			if(comment.author.id.equals(req.user._id)){
+				next();
+			}else{
+				res.redirect("back")
+			}
+		}
+	})
+	}else{
+		res.redirect("back");
+	}
 }
 
 app.listen(3000, function(){
