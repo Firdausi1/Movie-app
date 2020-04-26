@@ -19,7 +19,7 @@
         <div>
             <%if(currentUser && movie.author.id.equals(currentUser._id)){%>
             <div class="edit-delete">
-                <a href="/movies/<%=movie._id%>/edit" class="card-link btn btn-primary mr-3">Edit</a>
+                <a href="/movies/<%=movie._id%>/edit" class="card-link btn btn-secondary mr-3">Edit</a>
                 <form action="/movies/<%=movie._id%>?_method=DELETE" method="post" id="delete">
                     <button class="btn btn-outline-danger" >Delete</button>
                 </form>
@@ -38,9 +38,9 @@
                 <div class="clearfix"></div>
                   <p><%= comment.text %></p>
                   <%if(currentUser && comment.author.id.equals(currentUser._id)){%>
-                  <a class="btn btn-xs btn-warning" href="/movies/<%=movie._id%>/comments/<%=comment._id%>/edit">Edit</a>
+                  <a class="btn btn-xs btn-secondary" href="/movies/<%=movie._id%>/comments/<%=comment._id%>/edit">Edit</a>
                   <form class="delete-form" action="/movies/<%=movie._id%>/comments/<%=comment._id%>?_method=DELETE" method="post" >
-                    <button class="btn btn-xs btn-danger" >Delete</button>
+                    <button class="btn btn-xs btn-outline-danger" >Delete</button>
                 </form>
                 <%}%>
                 </div>
@@ -50,7 +50,7 @@
             <div class="form-group comment-box">
                 <textarea type="text" placeholder="comment" name="comment[text]" required class="form-control" rows="3"></textarea>
               </div>
-              <div class="comment-button"><input type="submit" class="btn btn-outline-primary " value="Add comment"></div>
+              <div class="comment-button"><input type="submit" class="btn btn-outline-dark " value="Add comment"></div>
               
             </form>
             
