@@ -8,12 +8,15 @@
         <!-- <div class="col-lg-4 col-md-6">
         <div class="card-group"> -->
             <div class="card"  id = "card">
-                    <img src="<%= movie.image%>" class="card-img-top img-fluid">
+                    <img src="<%= movie.image%>" class="card-img-top ">
                 <div class="card-body">
                     <h5 class="card-title"><%= movie.title %></h5>
                     <p class="card-text"><%= movie.body.substring(0, 100) %>...</p>
                     <p>Released on: <em><%= movie.Date.toDateString()%></em></p>
-                    <a href="/movies/<%=movie._id%>" class="card-link btn btn-primary">Read more</a>
+                    <hr>
+                    <div class="text-center">
+                        <a href="/movies/<%=movie._id%>" class="button-link" >Read more</a>
+                    </div>
                     <!-- <a><i class="fa fa-chat"></i></a> -->
                 </div> 
             </div>    
