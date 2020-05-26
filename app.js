@@ -10,7 +10,27 @@ var express = require("express"),
     passportLocalMongoose = require("passport-local-mongoose"),
     movie = require("./models/movie"),
     comment = require("./models/comment"),
-    user = require("./models/user");
+    user = require("./models/user"),
+    multer = require("multer"),
+    storage = multer.diskStorage({
+        filename: function(req, file, callback){
+            callback(null, Date.now()+ file.originalname)
+        }
+    })
+    var imageFilter = function(req, file, cb){
+        if(!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)){
+            return cb(new Error('only images files are allowed'), false)
+        }
+        cb(null, true)
+    }
+    var upload = multer({storage:storage, fileFilter:imageFilter})
+
+    var cloudinary = require('cloudinary')
+    cloudinary.config({ 
+        cloud_name: 'dohnvfhfs', 
+        api_key: process.env.CLOUDINARY_API_KEY, 
+        api_secret: process.env.CLOUDINARY_API_SECRET
+      });
 
     seedDB = require("./seed");
 
@@ -64,20 +84,21 @@ app.get("/movies/new", isLoggedIn, function(req, res){
     res.render("movies/new")
 })
 
-app.post("/movies", isLoggedIn, function(req, res){
+app.post("/movies", isLoggedIn, upload.single('image'), function(req, res){
     req.body.movie.body =req.sanitize(req.body.movie.body)
-    var title = req.body.movie.title;
-	var image = req.body.movie.image;
-    var body = req.body.movie.body;
-    var cast = req.body.movie.cast;
-	var director = req.body.movie.director;
-    var author = {
+    cloudinary.uploader.upload(req.file.path, function(result){
+    // var title = req.body.movie.title;
+	// var image = req.body.movie.image;
+    // var body = req.body.movie.body;
+    // var cast = req.body.movie.cast;
+    // var director = req.body.movie.director;
+    req.body.movie.image = result.secure_url
+    req.body.movie.author = {
         id : req.user._id,
         username: req.user.username
-    };
-    var movies = {title:title,image:image,body:body,author:author,cast:cast,director:director};
+    }
 
-    movie.create(movies, function(err, newMovie){
+    movie.create(req.body.movie, function(err, newMovie){
         if(err){
             console.log(err)
         }
@@ -85,6 +106,7 @@ app.post("/movies", isLoggedIn, function(req, res){
             res.redirect("/movies")
         }
     })
+})
 })
 
 app.get("/movies/:id", function(req, res){
