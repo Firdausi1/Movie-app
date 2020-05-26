@@ -14,7 +14,7 @@
             <p class="cast mb-0">Cast: <%=movie.cast%></p>
             <p class="cast">Director: <%=movie.director%></p>
             <p>
-                posted by: <a><em><%= movie.author.username %></em></a>
+                posted by: <a href="/users/<%=movie.author.id%>"><em><%= movie.author.username %></em></a>
             </p>
         </div>
         <div>

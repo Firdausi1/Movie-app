@@ -1,3 +1,4 @@
+require('dotenv').config()
 var express = require("express"),
 	methodOverride = require("method-override"),
 	app = express(),
@@ -200,8 +201,12 @@ app.get("/register", function(req, res){
 })
 
 app.post("/register", function(req, res){
-    var newUser = new user({username: req.body.username});
-    if(req.body.adminCode === "secretcode"){
+    var newUser = new user({username: req.body.username,
+                            firstName: req.body.firstName,
+                            lastName: req.body.lastName,
+                            avatar: req.body.avatar,
+                            email: req.body.email});
+    if(req.body.adminCode === process.env.ADMIN_CODE){
         newUser.isAdmin = true
     }
     user.register(newUser, req.body.password, function(err, user){
@@ -211,6 +216,20 @@ app.post("/register", function(req, res){
         }
         passport.authenticate("local")(req, res, function(){
             res.redirect("/movies")
+        })
+    })
+})
+
+app.get("/users/:id", function(req, res){
+    user.findById(req.params.id, function(err, foundUser){
+        if(err){
+            res.redirect("/")
+        }
+        movie.find().where('author.id').equals(foundUser._id).exec(function(err, movie){
+            if(err){
+                res.redirect("/")
+            }
+            res.render("users/show", {user:foundUser,movie:movie})
         })
     })
 })
