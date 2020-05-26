@@ -201,6 +201,9 @@ app.get("/register", function(req, res){
 
 app.post("/register", function(req, res){
     var newUser = new user({username: req.body.username});
+    if(req.body.adminCode === "secretcode"){
+        newUser.isAdmin = true
+    }
     user.register(newUser, req.body.password, function(err, user){
         if(err){
             console.log(err);
@@ -242,7 +245,7 @@ function checkOwnership(req, res, next){
 		if(err){
 			res.redirect("back")
 		}else{
-			if(movie.author.id.equals(req.user._id)){
+			if(movie.author.id.equals(req.user._id)||req.user.isAdmin){
 				next();
 			}else{
 				res.redirect("back")
@@ -260,7 +263,7 @@ function checkCommentOwnership(req, res, next){
 		if(err){
 			res.redirect("back")
 		}else{
-			if(comment.author.id.equals(req.user._id)){
+			if(comment.author.id.equals(req.user._id)||req.user.isAdmin){
 				next();
 			}else{
 				res.redirect("back")
